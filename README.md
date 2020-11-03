@@ -1,4 +1,4 @@
-#Bayesian Robust Optmization for Imitatation Learning 
+# Bayesian Robust Optmization for Imitatation Learning 
 
 Daniel Brown, Scott Niekum, Marek Petrik
 
