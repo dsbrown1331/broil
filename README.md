@@ -2,7 +2,11 @@
 
 Daniel Brown, Scott Niekum, Marek Petrik
 
-This repository contains a code used to conduct experiments reported in the paper.
+### Read the paper: [arXiv Link](https://arxiv.org/abs/2007.12315).
+
+## Source Code
+
+This repository contains code to reproduce the experiments.
 
 If you find this repository is useful in your research, please cite our paper:
 ```
