@@ -13,16 +13,16 @@ def plot_dashed_arrow(state, width, ax, direction):
     x_coord = state % width
     y_coord = state // width
     #print(x_coord, y_coord)
-    if direction is 'down':
+    if direction == 'down':
         x_end = 0
         y_end = shaft_length - h_length
-    elif direction is 'up':
+    elif direction == 'up':
         x_end = 0
         y_end = -shaft_length + h_length
-    elif direction is 'left':
+    elif direction == 'left':
         x_end = -shaft_length + h_length
         y_end = 0
-    elif direction is 'right':
+    elif direction == 'right':
         x_end = shaft_length - h_length
         y_end = 0
     else:
@@ -37,19 +37,19 @@ def plot_dashed_arrow(state, width, ax, direction):
     y_coord = state // width
     
     #print(x_coord, y_coord)
-    if direction is 'down':
+    if direction == 'down':
         x_end = 0
         y_end = h_length
         y_coord += shaft_length - h_length
-    elif direction is 'up':
+    elif direction == 'up':
         x_end = 0
         y_end = -h_length
         y_coord += -shaft_length + h_length
-    elif direction is 'left':
+    elif direction == 'left':
         x_end = -h_length
         y_end = 0
         x_coord += -shaft_length + h_length
-    elif direction is 'right':
+    elif direction == 'right':
         x_end = h_length
         y_end = 0
         x_coord += shaft_length - h_length
@@ -72,16 +72,16 @@ def plot_arrow(state, width, ax, direction, prob=None):
     x_coord = state % width
     y_coord = state // width
     #print(x_coord, y_coord)
-    if direction is 'down':
+    if direction == 'down':
         x_end = 0
         y_end = shaft_length - h_length
-    elif direction is 'up':
+    elif direction == 'up':
         x_end = 0
         y_end = -shaft_length + h_length
-    elif direction is 'left':
+    elif direction == 'left':
         x_end = -shaft_length + h_length
         y_end = 0
-    elif direction is 'right':
+    elif direction == 'right':
         x_end = shaft_length - h_length
         y_end = 0
     else:
@@ -161,17 +161,17 @@ def plot_stochastic_policy(pi, feature_mat, filename = None):
             for char in el_dict:
                 char_prob = el_dict[char]
                 #print(char)
-                if char is "^":
+                if char == "^":
                     plot_arrow(count, cols, ax, "up", prob=char_prob)
-                elif char is "v":
+                elif char == "v":
                     plot_arrow(count, cols, ax, "down", prob=char_prob)
-                elif char is ">":
+                elif char == ">":
                     plot_arrow(count, cols, ax, "right", prob=char_prob)
-                elif char is "<":
+                elif char == "<":
                     plot_arrow(count, cols, ax, "left", prob=char_prob)
-                elif char is ".":
+                elif char == ".":
                     plot_dot(count, cols, ax)
-                elif el is "w":
+                elif el == "w":
                     #wall
                     pass
             count += 1
@@ -238,17 +238,17 @@ def plot_optimal_policy(pi, feature_mat, filename = None):
             # could be a stochastic policy with more than one optimal action
             for char in el:
                 #print(char)
-                if char is "^":
+                if char == "^":
                     plot_arrow(count, cols, ax, "up")
-                elif char is "v":
+                elif char == "v":
                     plot_arrow(count, cols, ax, "down")
-                elif char is ">":
+                elif char == ">":
                     plot_arrow(count, cols, ax, "right")
-                elif char is "<":
+                elif char == "<":
                     plot_arrow(count, cols, ax, "left")
-                elif char is ".":
+                elif char == ".":
                     plot_dot(count, cols, ax)
-                elif el is "w":
+                elif el == "w":
                     #wall
                     pass
             count += 1
@@ -308,35 +308,35 @@ def plot_test_query(state, better_action, worse_action, feature_mat, equal_pref 
     ax = plt.axes() 
     count = 0
     rows,cols = len(feature_mat), len(feature_mat[0])
-    if better_action is "^":
+    if better_action == "^":
         plot_arrow(state, cols, ax, "up")
-    elif better_action is "v":
+    elif better_action == "v":
         plot_arrow(state, cols, ax, "down")
-    elif better_action is ">":
+    elif better_action == ">":
         plot_arrow(state, cols, ax, "right")
-    elif better_action is "<":
+    elif better_action == "<":
         plot_arrow(state, cols, ax, "left")
         
     if equal_pref:
-        if worse_action is "^":
+        if worse_action == "^":
             plot_arrow(state, cols, ax, "up")
-        elif worse_action is "v":
+        elif worse_action == "v":
             plot_arrow(state, cols, ax, "down")
-        elif worse_action is ">":
+        elif worse_action == ">":
             plot_arrow(state, cols, ax, "right")
-        elif worse_action is "<":
+        elif worse_action == "<":
             plot_arrow(state, cols, ax, "left")
 
     
     else:
     
-        if worse_action is "^":
+        if worse_action == "^":
             plot_dashed_arrow(state, cols, ax, "up")
-        elif worse_action is "v":
+        elif worse_action == "v":
             plot_dashed_arrow(state, cols, ax, "down")
-        elif worse_action is ">":
+        elif worse_action == ">":
             plot_dashed_arrow(state, cols, ax, "right")
-        elif worse_action is "<":
+        elif worse_action == "<":
             plot_dashed_arrow(state, cols, ax, "left")
 
     

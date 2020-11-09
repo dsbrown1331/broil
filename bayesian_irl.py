@@ -7,7 +7,7 @@ import utils
 import mdp_worlds
 
 class BayesianIRL:
-    def __init__(self, mdp_env, beta, step_stdev, debug=False, mcmc_norm = None, likelihood="birl"):
+    def __init__(self, mdp_env, beta, step_stdev, debug=False, mcmc_norm = None, likelihood="birl", prior=None):
         self.mdp_env = copy.deepcopy(mdp_env) #deep copy just in case so we don't mess up original 
         self.beta = beta
         self.step_stdev = step_stdev
@@ -17,12 +17,19 @@ class BayesianIRL:
         self.debug = debug
         self.mcmc_norm = mcmc_norm  #l2, inf, or l1
         self.likelihood = likelihood  #"birl" or "uniform"
+        self.prior = prior
 
 
     def log_likelihood(self, reward_hypothesis, q_values, demonstrations):
         #input is reward weights, q_values as a list [q(s0,a0), q(s1,a0), ..., q(sn,am)]
         # and demonstrations = [(s0,a0), ..., (sm,am)] list of state-action pairs
+        #if self.prior is None:
         log_sum = 0.0
+        if self.prior == "non-pos":
+            #check if weights are all non-pos
+            for r in reward_hypothesis:
+                if r > 0:
+                    return -np.inf
         for s,a in demonstrations:
             if s not in self.mdp_env.terminals and a is not None: #there are no counterfactuals in a terminal state
                 if self.likelihood == "birl":
@@ -67,7 +74,10 @@ class BayesianIRL:
             weights = - np.abs(weights)
             weights /= np.sum(np.abs(weights))
         
-        return weights
+        if self.prior == "non-pos":
+            return -np.sign(weights)*weights
+        else:
+            return weights
         
 
     #generate normalized weights ||w||_2 =1

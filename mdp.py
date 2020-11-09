@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Thu Feb 27 15:39:34 2020
+
+@author: dsbrown
+"""
 
 
 import numpy as np
@@ -856,7 +862,9 @@ def solve_lpal_policy_old(mdp_env, u_expert, debug=False):
     return u_sa
 
 def solve_cvar_expret_fixed_policy(mdp_env, u_policy, u_expert, posterior_rewards, p_R, alpha, debug=False):
-    '''input 
+    '''
+    Solves for CVaR and expectation with respect to BROIL baseline regret formulation using u_expert as the baseline
+    input 
         mdp_env: the mdp
         u_policy: the pre-optimized policy
         u_expert: the state-action occupancies of the expert
@@ -941,7 +949,15 @@ def solve_cvar_expret_fixed_policy(mdp_env, u_policy, u_expert, posterior_reward
     cvar = -sol['fun'] #get the cvar of the input policy (negative since we minimized negative objective)
     
     #calculate expected return of optimized policy
-    cvar_exp_ret = np.dot( np.dot(R, posterior_probs), u_policy)
+    if k != len(u_expert):
+        #we have feature approximation and have mu rather than u, at least we should
+        #print(weight_dim)
+        #print(u_expert)
+        assert len(u_expert) == weight_dim
+        expected_perf_expert = np.dot(posterior_probs, np.dot(posterior_rewards.transpose(), u_expert))
+    else:
+        expected_perf_expert = np.dot( np.dot(R, posterior_probs), u_expert)
+    cvar_exp_ret = np.dot( np.dot(R, posterior_probs), u_policy) - expected_perf_expert
 
     if debug: 
         print("CVaR = ", cvar)
@@ -1071,7 +1087,18 @@ def solve_max_cvar_policy(mdp_env, u_expert, posterior_rewards, p_R, alpha, debu
     cvar = var_sigma - 1.0/(1 - alpha) * np.dot(posterior_probs, relu_part)
 
     #calculate expected return of optimized policy
-    cvar_exp_ret = np.dot( np.dot(R, posterior_probs), cvar_opt_usa)
+    if k != len(u_expert):
+        #we have feature approximation and have mu rather than u, at least we should
+        #print(weight_dim)
+        #print(u_expert)
+        assert len(u_expert) == weight_dim
+        exp_baseline_perf = np.dot(posterior_probs, np.dot(posterior_rewards.transpose(), u_expert))
+    
+    else:
+        exp_baseline_perf = np.dot(np.dot(R, posterior_probs), u_expert)
+
+
+    cvar_exp_ret = np.dot( np.dot(R, posterior_probs), cvar_opt_usa) - exp_baseline_perf
 
     if debug: print("CVaR = ", cvar)
     if debug: print("policy u(s,a) = ", cvar_opt_usa)

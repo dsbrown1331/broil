@@ -6,7 +6,7 @@ import numpy as np
 import scipy
 import random
 import generate_efficient_frontier
-from machine_replacement_experimentv2 import generate_posterior_samples
+from machine_replacement import generate_posterior_samples
 
 
 if __name__=="__main__":
@@ -16,8 +16,7 @@ if __name__=="__main__":
     random.seed(seed)
     num_states = 4
     num_samples = 200000
-    #r_noop = np.array([0,0,-100])
-    #r_repair = np.array([-50,-50,-50])
+
     gamma = 0.95
     alpha = 0.99
     
@@ -80,5 +79,6 @@ if __name__=="__main__":
     plt.xlabel('Discounted return',fontsize=20)
     plt.ylabel('Number of runs',fontsize=20)
     plt.tight_layout()
+    plt.savefig("./figs/machine_replacement/return_distribution_machine_replacement.png")
 
     plt.show()
