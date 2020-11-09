@@ -57,7 +57,7 @@ jupyter notebook AmbiguousDemos.ipynb
 ```
 
 Make sure to change the kernel of the notebook to use the broil conda env by selecting from the dropdown menu: Kernel -> Change kernel -> broil.
-![Screen shot for how to change kernel](./figs/change_kernel.png)
+![Screen shot for how to change kernel](./figs/change_kernel_cropped.png)
 
 
 ## Computational Stress Tests (see [Appendix](https://arxiv.org/abs/2007.12315) for details):
