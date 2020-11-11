@@ -371,4 +371,4 @@ if __name__=="__main__":
   
     pi = ['v', '^><','.','<>v','<','>','<>^v','v' ,'^']
     feature_mat = [(1,0),(0,1),(0,1),(0,1),(0,1),(0,1),(0,1), (0,1),(1,0)  ]      
-    plot_optimal_policy_lists(pi, feature_mat, 3,3)
+    plot_optimal_policy_lists(pi, feature_mat, 3,3) 
