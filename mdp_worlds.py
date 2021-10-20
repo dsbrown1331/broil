@@ -76,23 +76,31 @@ def negative_sideeffects_goal(num_rows, num_cols, num_features, unseen_feature=F
     mdp_env = mdp.FeaturizedGridMDP(num_rows, num_cols, state_features, weights, gamma, init_dist, term_states)
     return mdp_env
 
-def bimodal_dist(mean1, mean2, prop1, prop2):
-  X1 = np.random.normal(mean1, 7.5, prop1)
-  X2 = np.random.normal(mean2, 5, prop2)
-  X = np.concatenate([X1, X2])
-  X = np.clip(X, 0, 90)
-  return X
+def bimodal_dist(mean1, mean2, prop1, num_trials):
+    assert int(prop1 * num_trials) + int((1 - prop1) * num_trials) == num_trials
+    X1 = np.random.normal(mean1, 7.5, int(prop1 * num_trials))
+    X2 = np.random.normal(mean2, 5, int((1 - prop1) * num_trials))
+    X = np.concatenate([X1, X2])
+    X = np.clip(X, 0, 90)
+    return X
 
 def simple_roads():
-    NUM_TRIALS = 100
+    NUM_TRIALS = 10
     states = ["a", "b", "c"]
     roads = [("a", "b"), ("b" "c")]
     freeways = [("a", "c")]
     actions = roads + freeways
     transitions = np.zeros((len(actions), len(states), len(states)))
+    # add bidirectional roads
+    # define a cost function
+    # check for terminals
+    # add check for type of road in reward func
     for i, action in enumerate(actions):
         start, end = action
         for j, state in enumerate(states):
+            if start == states[-1]:
+                transition[i][j] = np.zeros(len(states))
+                continue
             if state == start:
                 transitions[i][j][states.index(end)] = 1
             else:
@@ -100,34 +108,49 @@ def simple_roads():
 
     r_sa = r = np.ndarray(shape=(len(states) * len(actions), NUM_TRIALS))
     i = 0
-    for s in states:
-        for start, end in roads:
+    # add a big penalty for self transition.
+    # for r_sa iterate through actions then states
+    for start, end in roads:
+        for s in states:
             if s == start:
-                r[i] = np.random.normal(45, 7.5, NUM_TRIALS)
+                r[i] = np.random.normal(20, 7.5, NUM_TRIALS)
             else:
-                r[i] = np.zeros(NUM_TRIALS)
+                r[i] = np.zeros(NUM_TRIALS) * -1
             i += 1
-        for start, end in freeways:
+    for start, end in freeways:
+        for s in states:
             if s == start:
-                r[i] = bimodal_dist(75, 20, 75, 25)
+                r[i] = bimodal_dist(75, 20, 0.7, NUM_TRIALS)
             else:
-                r[i] = np.zeros(NUM_TRIALS)
+                r[i] = np.zeros(NUM_TRIALS) * -1
             i += 1
 
     gamma = 0.99
-    init_dist = np.zeros(len(states))
+    init_dist = np.array([1, 0, 0])
     mdp_env = mdp.roadsMDP(states, actions, r_sa, transitions, gamma, init_dist)
-
+    print(r_sa)
     return mdp_env, r_sa
+
 
 
 mdp_env, r_sa = simple_roads()
 u_expert = np.zeros(mdp_env.get_num_actions() * mdp_env.get_num_states())
-posterior_probs = np.ones(100) / 100
-alpha = 0.01
-lamda = 0.05
+"""
+if we had expert data we could feed this in to CVAR
+Try to be baseline robust -> something different to the demonstrator would have more risk
+Appendix from the paper is most useful
+"""
+posterior_probs = np.ones(10) / 10
+alpha = 0.95
+lamda = 0.6
 debug = True
 robust_opt_usa, cvar_value, exp_ret = mdp.solve_max_cvar_policy(mdp_env, u_expert, r_sa, posterior_probs, alpha, debug, lamda)
 print("=" * 100)
-print(robust_opt_usa[:3])
-print(max(robust_opt_usa[:3]))
+print(robust_opt_usa[::3])
+print(max(robust_opt_usa))
+
+"""
+More complex road network
+visualization of data - Maybe coordinates
+
+"""
