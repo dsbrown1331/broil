@@ -78,8 +78,8 @@ def negative_sideeffects_goal(num_rows, num_cols, num_features, unseen_feature=F
 
 def bimodal_dist(mean1, mean2, prop1, num_trials):
     assert int(prop1 * num_trials) + int((1 - prop1) * num_trials) == num_trials
-    X1 = np.random.normal(mean1, 7.5, int(prop1 * num_trials))
-    X2 = np.random.normal(mean2, 5, int((1 - prop1) * num_trials))
+    X1 = np.random.normal(mean1, 2, int(prop1 * num_trials))
+    X2 = np.random.normal(mean2, 2, int((1 - prop1) * num_trials))
     X = np.concatenate([X1, X2])
     return X
 
@@ -97,13 +97,17 @@ def simple_roads():
     for i, action in enumerate(actions):
         start, end = action
         for j, state in enumerate(states):
-            if start == states[-1]:
-                transition[i][j] = np.zeros(len(states))
-                continue
+
             if state == start:
                 transitions[i][j][states.index(end)] = 1
+            elif state == end:
+                transitions[i][states.index(end)][states.index(start)] = 1
             else:
                 transitions[i][j][j] = 1
+    for i, action in enumerate(actions):
+        j = len(states) - 1
+        transitions[i][j] = np.zeros(len(states))
+        transitions[i][j][j] = 1
     print(transitions)
 
     r_sa = r = np.ndarray(shape=(len(states) * len(actions), NUM_TRIALS))
@@ -112,21 +116,17 @@ def simple_roads():
     # for r_sa iterate through actions then states
     for start, end in roads:
         for s in states:
-            if s == states[-1]:
-                r[i] = np.zeros(NUM_TRIALS)
-            elif s == start:
-                r[i] = np.random.normal(-10, 0.5, NUM_TRIALS)
+            if s == start:
+                r[i] = np.random.normal(30, 2, NUM_TRIALS)
             else:
-                r[i] = np.zeros(NUM_TRIALS) - 10 ** 3
+                r[i] = np.zeros(NUM_TRIALS) - 10 ** 4
             i += 1
     for start, end in freeways:
         for s in states:
-            if s == states[-1]:
-                r[i] = np.zeros(NUM_TRIALS)
-            elif s == start:
-                r[i] = bimodal_dist(-10, -20, 0.7, NUM_TRIALS)
+            if s == start:
+                r[i] = bimodal_dist(-10, -40, 0.7, NUM_TRIALS)
             else:
-                r[i] = np.zeros(NUM_TRIALS) - 10 ** 3
+                r[i] = np.zeros(NUM_TRIALS) - 10 ** 4
             i += 1
 
     gamma = 0.99
