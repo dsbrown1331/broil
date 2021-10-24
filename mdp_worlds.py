@@ -1,6 +1,7 @@
 import utils
 import mdp
 import numpy as np
+from visualize_roads import *
 
 def lava_ambiguous_corridor():
     num_rows = 3
@@ -85,8 +86,10 @@ def bimodal_dist(mean1, mean2, prop1, num_trials):
 
 def simple_roads():
     NUM_TRIALS = 10
-    states = ["a", "b", "c"]
-    roads = [("a", "b"), ("b" "c")]
+    states_with_loc = [["a", (0.1, 0.5)], ["b", (0.5, 0.75)], ["c", (0.9, 0.5)]]
+    states = [i[0] for i in states_with_loc]
+    # states = ["a", "b", "c"]
+    roads = [("a", "b"), ("b", "c")]
     freeways = [("a", "c")]
     actions = roads + freeways
     transitions = np.zeros((len(actions), len(states), len(states)))
@@ -102,14 +105,14 @@ def simple_roads():
                 continue
             if state == start:
                 transitions[i][j][states.index(end)] = 1
-            else:
+                transitions[i][states.index(end)][j] = 1
+
+            elif state != end:
                 transitions[i][j][j] = 1
-    print(transitions)
+    # print(transitions)
 
     r_sa = r = np.ndarray(shape=(len(states) * len(actions), NUM_TRIALS))
     i = 0
-    # add a big penalty for self transition.
-    # for r_sa iterate through actions then states
     for start, end in roads:
         for s in states:
             if s == states[-1]:
@@ -132,26 +135,30 @@ def simple_roads():
     gamma = 0.99
     init_dist = np.array([1, 0, 0])
     mdp_env = mdp.roadsMDP(states, actions, r_sa, transitions, gamma, init_dist)
-    print(r_sa)
-    return mdp_env, r_sa
+    # print(r_sa)
+    return mdp_env, r_sa, states_with_loc, actions
 
 
 
-mdp_env, r_sa = simple_roads()
+mdp_env, r_sa, states, actions = simple_roads()
 u_expert = np.zeros(mdp_env.get_num_actions() * mdp_env.get_num_states())
 """
 if we had expert data we could feed this in to CVAR
 Try to be baseline robust -> something different to the demonstrator would have more risk
 Appendix from the paper is most useful
 """
+
 posterior_probs = np.ones(10) / 10
-for lamda in [0, 0.1, 0.3, 0.5, 0.7, 0.9, 1]:
+for lamda in np.arange(0.30, 0.5, 0.01):
     alpha = 0.95
     debug = False
     robust_opt_usa, cvar_value, exp_ret = mdp.solve_max_cvar_policy(mdp_env, u_expert, r_sa, posterior_probs, alpha, debug, lamda)
     print("=" * 100)
-    print(robust_opt_usa[::3])
-    print(np.argmax(robust_opt_usa[::3]))
+
+    for i in range(mdp_env.get_num_states()):
+        print("action from state {}".format(mdp_env.states[i]))
+        print(mdp_env.get_readable_actions(np.argmax(robust_opt_usa[i::mdp_env.get_num_actions()])))
+    create_plot(states, actions, robust_opt_usa)
 
 """
 More complex road network

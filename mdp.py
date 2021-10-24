@@ -167,7 +167,7 @@ class roadsMDP(implements(MDP)):
 
     def get_readable_actions(self, action_num):
         action = self.actions[action_num]
-        return "%s to %s".format(action[0], action[1])
+        return "{} to {}".format(action[0], action[1])
 
     def get_transition_prob(self, s1, a, s2):
         if (s1, s2) == a:
