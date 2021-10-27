@@ -13,7 +13,7 @@ def norm_action_prob(states, actions, i, robust_opt_usa):
     curr_prob = np.sum(robust_opt_usa[state_index + i * len(actions)])
     return curr_prob / all_actions_from_state
 
-def create_plot(states, actions, opt_policy):
+def create_plot(states, actions, opt_policy, roads):
     circle_size = 0.05
     start_color = 'b'
     end_color = 'b'
@@ -25,8 +25,10 @@ def create_plot(states, actions, opt_policy):
         prob = norm_action_prob(states, actions, i, opt_policy)
         print(prob)
         f, t = get_location_of_state(action[0], action[1], states)
-        ax.plot([f[0], t[0]], [f[1], t[1]], color=(0.5, 0.5, 1 - (1 * prob)), linewidth=2, alpha = 1)
-
+        if action in roads:
+            ax.plot([f[0], t[0]], [f[1], t[1]], color=(0.5, 0.5, 1 - (1 * prob)), linewidth=1, alpha = 1)
+        else:
+            ax.plot([f[0], t[0]], [f[1], t[1]], color=(0.5, 0.5, 1 - (1 * prob)), linewidth=2, alpha = 1)
 
 
     for state in states:

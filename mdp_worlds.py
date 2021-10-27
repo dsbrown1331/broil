@@ -136,11 +136,11 @@ def simple_roads():
     init_dist = np.array([1, 0, 0])
     mdp_env = mdp.roadsMDP(states, actions, r_sa, transitions, gamma, init_dist)
     # print(r_sa)
-    return mdp_env, r_sa, states_with_loc, actions
+    return mdp_env, r_sa, states_with_loc, actions, roads, freeways
 
 
 
-mdp_env, r_sa, states, actions = simple_roads()
+mdp_env, r_sa, states, actions, roads, freeways = simple_roads()
 u_expert = np.zeros(mdp_env.get_num_actions() * mdp_env.get_num_states())
 """
 if we had expert data we could feed this in to CVAR
@@ -158,7 +158,7 @@ for lamda in np.arange(0.30, 0.5, 0.01):
     for i in range(mdp_env.get_num_states()):
         print("action from state {}".format(mdp_env.states[i]))
         print(mdp_env.get_readable_actions(np.argmax(robust_opt_usa[i::mdp_env.get_num_actions()])))
-    create_plot(states, actions, robust_opt_usa)
+    create_plot(states, actions, robust_opt_usa, roads)
 
 """
 More complex road network
