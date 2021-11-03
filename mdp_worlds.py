@@ -85,12 +85,12 @@ def bimodal_dist(mean1, mean2, prop1, num_trials):
     return X
 
 def simple_roads():
-    NUM_TRIALS = 10
-    states_with_loc = [["a", (0.1, 0.5)], ["b", (0.5, 0.75)], ["c", (0.9, 0.5)]]
+    NUM_TRIALS = 100
+    states_with_loc = [["a", (0.1, 0.5)], ["b", (0.5, 0.75)], ["c", (0.5, 0.25)], ["d", (0.6, 0.5)], ["e", (0.9, 0.5)]]
     states = [i[0] for i in states_with_loc]
     # states = ["a", "b", "c"]
-    roads = [("a", "b"), ("b", "c")]
-    freeways = [("a", "c")]
+    roads = [("a", "b"), ("a", "c"), ("c", "b"), ("d", "e"), ("b", "d")]
+    freeways = [("a", "d"), ("c", "e")]
     actions = roads + freeways
     transitions = np.zeros((len(actions), len(states), len(states)))
     # add bidirectional roads
@@ -133,7 +133,7 @@ def simple_roads():
             i += 1
 
     gamma = 0.99
-    init_dist = np.array([1, 0, 0])
+    init_dist = np.array([1, 0, 0, 0, 0])
     mdp_env = mdp.roadsMDP(states, actions, r_sa, transitions, gamma, init_dist)
     # print(r_sa)
     return mdp_env, r_sa, states_with_loc, actions, roads, freeways
@@ -148,8 +148,8 @@ Try to be baseline robust -> something different to the demonstrator would have 
 Appendix from the paper is most useful
 """
 
-posterior_probs = np.ones(10) / 10
-for lamda in np.arange(0.30, 0.5, 0.01):
+posterior_probs = np.ones(100) / 100
+for lamda in np.arange(0.20, 0.9, 0.1):
     alpha = 0.95
     debug = False
     robust_opt_usa, cvar_value, exp_ret = mdp.solve_max_cvar_policy(mdp_env, u_expert, r_sa, posterior_probs, alpha, debug, lamda)
@@ -157,8 +157,8 @@ for lamda in np.arange(0.30, 0.5, 0.01):
 
     for i in range(mdp_env.get_num_states()):
         print("action from state {}".format(mdp_env.states[i]))
-        print(mdp_env.get_readable_actions(np.argmax(robust_opt_usa[i::mdp_env.get_num_actions()])))
-    create_plot(states, actions, robust_opt_usa, roads)
+        print(mdp_env.get_readable_actions(np.argmax(robust_opt_usa[i::mdp_env.get_num_states()])))
+    create_plot(states, actions, robust_opt_usa, roads, lamda)
 
 """
 More complex road network
