@@ -16,10 +16,10 @@ def norm_action_prob(states, actions, i, robust_opt_usa):
     return curr_prob / all_actions_from_state
 
 def create_plot(states, actions, opt_policy, roads, lamda):
-    circle_size = 0.05
-    start_color = 'g'
+    circle_size = 0.025
+    start_color = 'b'
     end_color = 'r'
-    node_color = 'b'
+    node_color = 'black'
 
     fig, ax = plt.subplots(figsize = (10, 10)) # note we must use plt.subplots, not plt.subplot
 
@@ -53,7 +53,3 @@ def create_plot(states, actions, opt_policy, roads, lamda):
     plt.show()
     # plt.pause(2)
     # plt.close()
-
-
-
-# if __name__== "__main__":
