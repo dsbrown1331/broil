@@ -158,14 +158,14 @@ alpha = 0.95
 debug = True
 lamda_range = np.arange(0, 1, 0.01)
 posterior_probs = np.ones(100) / 100
-# for lamda in np.arange(0.9, 1.05, 0.1):
-#     robust_opt_usa, cvar_value, exp_ret = mdp.solve_max_cvar_policy(mdp_env, u_expert, r_sa, posterior_probs, alpha, debug, lamda)
-#     print("=" * 100)
-#
-#     for i in range(mdp_env.get_num_states()):
-#         print("action from state {}".format(mdp_env.states[i]))
-#         print(mdp_env.get_readable_actions(np.argmax(robust_opt_usa[i::mdp_env.get_num_states()])))
-#         create_plot(states, actions, robust_opt_usa, roads, lamda)
+for lamda in np.arange(0.1, 1.05, 0.1):
+    robust_opt_usa, cvar_value, exp_ret = mdp.solve_max_cvar_policy(mdp_env, u_expert, r_sa, posterior_probs, alpha, debug, lamda)
+    print("=" * 100)
+
+    for i in range(mdp_env.get_num_states()):
+        print("action from state {}".format(mdp_env.states[i]))
+        print(mdp_env.get_readable_actions(np.argmax(robust_opt_usa[i::mdp_env.get_num_states()])))
+    create_plot(states, actions, robust_opt_usa, roads, lamda)
 
 def calc_frontier(mdp_env, u_expert, reward_posterior, posterior_probs, lambda_range, alpha, debug=False):
     '''takes an MDP and runs over a range of lambdas to output the expected value and CVaR of the resulting solutions to the LP
