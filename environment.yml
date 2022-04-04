@@ -21,7 +21,7 @@ dependencies:
   - gstreamer=1.14.5=h36ae1b5_2
   - icu=67.1=he1b5a44_0
   - ipykernel=5.3.4=py39h9cd51e4_1
-  - ipython=7.19.0=py39hef51801_0
+  - ipython=7.19.0
   - ipython_genutils=0.2.0=py_1
   - jedi=0.17.2=py39hde42818_1
   - jpeg=9d=h36c2ea0_0
